@@ -1,0 +1,18 @@
+     -.--ns INFO     gpi                                ..mbed\gpi_embed.cpp:94   in _embed_init_python              Using Python 3.12.4 interpreter at C:\Users\Stathis\Desktop\test\vlsi_tests\spi\cocotb\Scripts\python.exe
+     -.--ns INFO     gpi                                ..\gpi\GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (devel)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1774479881
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from C:\Users\Stathis\Desktop\test\vlsi_tests\spi\cocotb\Lib\site-packages\cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_spi.test_spi_handshake (1/1)
+     0.00ns INFO     test                               Accesing the DUT: spi_handshake_top
+     0.00ns INFO     test                               Reseting the design.
+   406.00ns INFO     cocotb.regression                  test_spi.test_spi_handshake passed
+   406.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                        ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        **************************************************************************************
+                                                        ** test_spi.test_spi_handshake    PASS         406.00           0.01      58014.08  **
+                                                        **************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                406.00           0.01      40606.82  **
+                                                        **************************************************************************************
+FST info: dumpfile C:\Users\Stathis\Desktop\test\vlsi_tests\spi\tests\build_spi_handshake\spi_handshake_top.fst opened for output.

@@ -1,0 +1,9 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1774479881" />
+    <testcase name="test_spi_master" classname="test_spi" file="C:\Users\Stathis\Desktop\test\vlsi_tests\spi\tests\test_spi.py" lineno="15" time="0" sim_time_ns="0" ratio_time="0">
+      <skipped />
+    </testcase>
+    <testcase name="test_spi_handshake" classname="test_spi" file="C:\Users\Stathis\Desktop\test\vlsi_tests\spi\tests\test_spi.py" lineno="38" time="0.006998300552368164" sim_time_ns="406.0" ratio_time="58014.08455694478" />
+  </testsuite>
+</testsuites>
