@@ -1,0 +1,42 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.2 (win64) Build 5239630 Fri Nov 08 22:35:27 MST 2024
+| Date         : Sun Sep 28 05:11:36 2025
+| Host         : DESKTOP-14L5F10 running 64-bit major release  (build 9200)
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+RTL Linter Report
+
+Table of Contents
+-----------------
+1. Summary
+2. Expanded
+
+1. Summary
+----------
+
++-----------+----------+--------------+----------+--------------------------------------------------------------------------------+
+| Rule ID   | Severity | # Violations | # Waived | Message Template                                                               |
++-----------+----------+--------------+----------+--------------------------------------------------------------------------------+
+| ASSIGN-9  | WARNING  | 3            | 0        | Some bits in IO '(rtl_name)' are not set. First unset bit index is '(info)'.   |
+| ASSIGN-10 | WARNING  | 3            | 0        | Some bits in IO '(rtl_name)' are not read. First unread bit index is '(info)'. |
++-----------+----------+--------------+----------+--------------------------------------------------------------------------------+
+
+
+2. Expanded
+-----------
+
++-----------+------------------------+----------+------+---------------+--------------+-------------+
+| Rule ID   | description            | rtl_name | info | rtl_hierarchy | rtl_file     | Line number |
++-----------+------------------------+----------+------+---------------+--------------+-------------+
+| ASSIGN-9  | IO bit(s) not assigned | o_cs_n   | 0    | spi_module    | spi_module.v | 15          |
+| ASSIGN-9  | IO bit(s) not assigned | o_mosi   | 0    | spi_module    | spi_module.v | 13          |
+| ASSIGN-9  | IO bit(s) not assigned | o_sclk   | 0    | spi_module    | spi_module.v | 16          |
+| ASSIGN-10 | IO bit(s) not read     | i_miso   | 0    | spi_module    | spi_module.v | 11          |
+| ASSIGN-10 | IO bit(s) not read     | rst_n    | 0    | spi_module    | spi_module.v | 6           |
+| ASSIGN-10 | IO bit(s) not read     | start    | 0    | spi_module    | spi_module.v | 8           |
++-----------+------------------------+----------+------+---------------+--------------+-------------+
+* create_waiver can be used to apply waiver to linter violations.
+** For example, create_waiver -type LINT -id RULE_ID {-rtl_name RTL_NAME} {-rtl_hierarchy RTL_MODULE_NAME} {-rtl_file RTL_FILE_NAME}.
+
+
