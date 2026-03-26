@@ -1,0 +1,20 @@
+cocotb
+spi_output
+
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+.pytest_cache
+
+# Cocotb/Simulation builds
+sim_build/
+build_spi_*/
+test_spi_*/
+*.vcd
+*.ghw
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
