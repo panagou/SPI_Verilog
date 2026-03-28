@@ -1,4 +1,4 @@
-from cocotb.triggers import Combine, Timer, ClockCycles, RisingEdge, FallingEdge
+from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge
 from cocotb.clock import Clock
 from cocotb.types import LogicArray
 import cocotb
@@ -27,15 +27,6 @@ async def spi_slave_send(dut):
         dut.i_sclk.value = 0b1
         await RisingEdge (dut.clk)
     dut.i_cs_n.value = 0b1
-    
-async def spi_fifo_write(clk, write_en, data_in, data, width, fifo_depth):
-    for i in range(len(data)):
-        await FallingEdge(clk)
-        write_en.value = 0b1
-        data_in.value = LogicArray(data[i], int(width.value))
-        await RisingEdge(clk)
-        await Timer(1, unit="ns")
-        write_en.value = 0b0
     
 #--------------------------------------------------------------------------------------------------
 @cocotb.test()
@@ -99,44 +90,3 @@ async def test_spi_slave(dut):
         
     
     await ClockCycles(dut.clk, 200, rising=True)
-
-#--------------------------------------------------------------------------------------------------
-@cocotb.test()
-async def test_spi_handshake(dut):
-    cocotb.log.info(f"Accesing the DUT: {dut._name}")
-    
-    master_data = [15, 12, 5, 3, 2]
-    slave_data  = [15, 12, 5, 3, 2]
-    
-    tx_data_master = dut.tx_data_master
-    tx_data_slave = dut.tx_data_slave
-    write_en_master = dut.write_en_master
-    write_en_slave = dut.write_en_slave
-      
-    cocotb.start_soon(Clock(dut.clk, 4, unit="ns").start())  
-    await reset_dut(dut)
-  
-    
-    t1 =cocotb.start_soon(spi_fifo_write(
-        dut.clk,
-        write_en_master,
-        tx_data_master,
-        master_data,
-        dut.DATA_WIDTH,
-        dut.FIFO_DEPTH
-    ))
-
-
-    t2 = cocotb.start_soon(spi_fifo_write(
-        dut.clk,
-        write_en_slave,
-        tx_data_slave,
-        slave_data,
-        dut.DATA_WIDTH,
-        dut.FIFO_DEPTH
-    ))
-    
-    # await Combine(t1, t2)
-
-    
-    await ClockCycles(dut.clk, 100, rising=True)

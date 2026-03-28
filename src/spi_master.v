@@ -68,13 +68,16 @@
                         mosi_q        <= (first_send) ? data_in_reg[DATA_WIDTH-2] : data_in_reg[DATA_WIDTH-1]; 
                         data_in_reg   <= (first_send) ? {data_in_reg[DATA_WIDTH-3:0], 2'b00} : {data_in_reg[DATA_WIDTH-2:0], 1'b0}; // Shift left
                         first_send    <= 1'b0;
+                        // if (&bit_cnt[$clog2(DATA_WIDTH)-1:0]) begin
+                        //     inactive <= 1'b1; //read fifo one cyce earlier 
+                        // end
 
                     end 
                     if (sclk_fall) begin
                         data_out <= {data_out[DATA_WIDTH-2:0], miso}; // Shift left and capture MISO
                         bit_cnt <= bit_cnt + 1'b1;
                         if (&bit_cnt[$clog2(DATA_WIDTH)-1:0]) begin
-                            inactive <= 1'b1;  
+                            inactive <= 1'b1;  //maybe change this to zero?
                             done <= 1'b1; 
                         end
                     end
@@ -82,7 +85,7 @@
                         spi_status  <= `SPI_STATUS_IDLE; 
                         cs_n        <= 1'b1;
                         first_send  <= 1'b1;
-                        inactive    <= 1'b1; 
+                        inactive    <= 1'b0; 
                     end
                 end
             endcase

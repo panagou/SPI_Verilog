@@ -66,7 +66,7 @@ def test_spi_handshake_runner():
     
     runner.test(
         hdl_toplevel = "spi_handshake_top", 
-        test_module = "test_spi", 
+        test_module = "test_spi_handshake", 
         test_filter = "test_spi_handshake",
         waves = True,
         log_file = os.path.join(test_drctr, f"./test_{__name__}.log"),

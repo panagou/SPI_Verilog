@@ -24,11 +24,11 @@ module spi_module #(
     output wire [DATA_WIDTH-1:0] data_out
 );
 
-    wire [DATA_WIDTH-1:0] fifo_data_out;
-    wire fifo_empty, fifo_full;
-
     generate 
         if(SPI_MASTER) begin : gen_spi_master
+
+            wire [DATA_WIDTH-1:0] fifo_data_out;
+            wire fifo_empty, fifo_full;
 
             wire inactive_master, read_start, read_fifo;
             reg read_start_reg, read_fifo_reg;
@@ -78,6 +78,9 @@ module spi_module #(
 
         end else begin : gen_spi_slave
 
+            wire [DATA_WIDTH-1:0] fifo_data_out, slave_data_in;
+            wire fifo_empty, fifo_full;
+
             wire i_cs_n_fall, read_fifo;
             reg i_cs_n_reg, i_sclk_reg, mosi_reg;
 
@@ -92,7 +95,6 @@ module spi_module #(
                     mosi_reg <= i_mosi;
                 end
             end
-
             spi_fifo #(
                 .FIFO_DEPTH(FIFO_DEPTH),
                 .FIFO_WIDTH(DATA_WIDTH)
