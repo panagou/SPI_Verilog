@@ -15,7 +15,7 @@ module spi_slave #(
     reg miso_q, first_send;
     reg sclk_d;
     wire sclk_rise, sclk_fall;
-    reg [DATA_WIDTH-1:0] data_in_reg, data_out_reg;
+    reg [DATA_WIDTH-1:0] data_in_reg;
 
     assign sclk_rise = sclk & ~sclk_d; 
     assign sclk_fall = ~sclk & sclk_d;
@@ -25,7 +25,6 @@ module spi_slave #(
 
     always @(posedge clk or posedge cs_n) begin
         if (cs_n) begin
-            data_out_reg <= {DATA_WIDTH{1'b0}};
             bit_cnt      <= {$clog2(DATA_WIDTH){1'b0}};
             miso_q       <= 1'b0;
             first_send   <=1'b1;
@@ -37,12 +36,11 @@ module spi_slave #(
             sclk_d <= sclk;
             if (valid) valid <= 1'b0;
             if (sclk_rise) begin
+                data_out <= {data_out[DATA_WIDTH-2:0], mosi};
                 if (bit_cnt == {{($clog2(DATA_WIDTH)){1'b1}}}) begin
-                    data_out <= {data_out_reg[DATA_WIDTH-2:0], mosi};
                     bit_cnt  <= {$clog2(DATA_WIDTH){1'b0}};
                     valid    <= 1'b1;
                 end else begin
-                    data_out_reg <= {data_out_reg[DATA_WIDTH-2:0], mosi}; // Shift in data from 
                     bit_cnt  <= bit_cnt + 1;
                 end
             end else if (sclk_fall) begin

@@ -14,7 +14,7 @@ def get_test_dir():
     return os.path.join(os.path.abspath("./"), f"{caller_name}".replace("_runner", ""))
 
 #------------------------------------------------------------------------------------------------
-@pytest.mark.parametrize("master", [True])
+@pytest.mark.parametrize("master", [False])
 
 def test_spi_module_runner(master):
     runner = get_runner("icarus")
@@ -29,7 +29,7 @@ def test_spi_module_runner(master):
         includes = ["../src/"],
         hdl_toplevel = "spi_module",
         waves = True,
-        parameters = {"DATA_WIDTH" : 4, "SPI_MASTER" : 1},
+        parameters = {"DATA_WIDTH" : 4, "SPI_MASTER" : 0, "FIFO_DEPTH" : 8},
         always = True,
         log_file = os.path.join(build_drctr, f"./build_{__name__}.log"),
         build_dir = build_drctr
