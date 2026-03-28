@@ -20,7 +20,7 @@ module spi_module #(
     output wire o_miso,
     output wire  o_cs_n,
     output wire o_sclk,
-    output wire valid,
+    output wire done,
     output wire [DATA_WIDTH-1:0] data_out
 );
 
@@ -69,7 +69,7 @@ module spi_module #(
                 .cs_n(o_cs_n),
                 .sclk(o_sclk),
                 .data_out(data_out),
-                .valid(valid),
+                .done(done),
                 .inactive(inactive_master)
             );
 
@@ -120,7 +120,7 @@ module spi_module #(
                 .miso(o_miso),
                 .data_in(fifo_data_out),
                 .data_out(data_out),
-                .valid(valid)
+                .done(done)
             ); 
         end
     endgenerate

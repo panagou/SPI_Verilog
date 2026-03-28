@@ -12,7 +12,7 @@
     output wire                  mosi,      
     output reg                   cs_n,      
     output wire                  sclk,
-    output reg                   valid,
+    output reg                   done,
     output reg                  inactive,        
     output reg  [DATA_WIDTH-1:0] data_out   // Data received from slave
     
@@ -43,15 +43,15 @@
             data_out    <= {DATA_WIDTH{1'b0}};
             clk_reg     <= 1'b0;
             clk_d       <= 1'b0;
-            valid       <= 1'b0;
+            done        <= 1'b0;
             inactive    <= 1'b1;
             first_send  <= 1'b1; 
             data_in_reg <= {DATA_WIDTH{1'b0}};     
         end else begin
             clk_d <= clk_reg;
+            if (done) done <= 1'b0;
             case(spi_status)
                 `SPI_STATUS_IDLE: begin
-                    valid <=1'b0;
                     if (start) begin
                         data_in_reg <= data_in;
                         cs_n        <= 1'b0;                  
@@ -73,16 +73,15 @@
                     if (sclk_fall) begin
                         data_out <= {data_out[DATA_WIDTH-2:0], miso}; // Shift left and capture MISO
                         bit_cnt <= bit_cnt + 1'b1;
-                        if (&bit_cnt[$clog2(DATA_WIDTH)-1:0]) inactive <= 1'b1;   
+                        if (&bit_cnt[$clog2(DATA_WIDTH)-1:0]) begin
+                            inactive <= 1'b1;  
+                            done <= 1'b1; 
+                        end
                     end
-                    // if(bit_cnt == {1'b0, {($clog2(DATA_WIDTH)){1'b1}}}) begin
-                    //     valid       <= 1'b1;
-                    // end
                     if (bit_cnt[$clog2(DATA_WIDTH)]) begin
                         spi_status  <= `SPI_STATUS_IDLE; 
                         cs_n        <= 1'b1;
                         first_send  <= 1'b1;
-                        valid       <= 1'b1;
                         inactive    <= 1'b1; 
                     end
                 end

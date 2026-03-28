@@ -8,7 +8,7 @@ module spi_slave #(
     input  wire mosi,
     output wire miso,
     output reg  [DATA_WIDTH-1:0] data_out,
-    output reg  valid
+    output reg  done
 );
 
     reg [$clog2(DATA_WIDTH)-1:0] bit_cnt; 
@@ -31,15 +31,15 @@ module spi_slave #(
             data_in_reg  <= {DATA_WIDTH{1'b0}};
             sclk_d       <= 1'b1;
             data_out     <= {DATA_WIDTH{1'b0}};
-            valid        <= 1'b0;
+            done         <= 1'b0;
         end else begin
             sclk_d <= sclk;
-            if (valid) valid <= 1'b0;
+            if (done) done <= 1'b0;
             if (sclk_rise) begin
                 data_out <= {data_out[DATA_WIDTH-2:0], mosi};
                 if (bit_cnt == {{($clog2(DATA_WIDTH)){1'b1}}}) begin
                     bit_cnt  <= {$clog2(DATA_WIDTH){1'b0}};
-                    valid    <= 1'b1;
+                    done     <= 1'b1;
                 end else begin
                     bit_cnt  <= bit_cnt + 1;
                 end
