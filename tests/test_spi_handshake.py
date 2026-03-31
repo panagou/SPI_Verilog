@@ -2,6 +2,9 @@ import test_spi
 from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnly, Combine
 from cocotb.clock import Clock
 from cocotb.types import LogicArray
+
+import random
+from cocotb_coverage.coverage import coverage_section
 import cocotb
 
 #--------------------------------------------------------------------------------------------------
@@ -28,11 +31,11 @@ async def spi_handshake_check(tx_master_data, tx_slave_data, master_done, slave_
     
     await Combine(mastercheck, slavecheck)
     
-async def spi_fifo_write(clk, write_en, data_in, data, width, fifo_depth):
+async def spi_fifo_write(clk, write_en, data_in, data):
     for i in range(len(data)):
         await FallingEdge(clk)
         write_en.value = 0b1
-        data_in.value = LogicArray(data[i], int(width.value))
+        data_in.value = data[i]
         await RisingEdge(clk)
         await Timer(1, unit="ns")
         write_en.value = 0b0
@@ -50,16 +53,34 @@ async def read_master_results(clk, read_en, data_out, expected_data):
         actual = data_out.value
         cocotb.log.info(f"|{hex(expected_data[i]):^{17}}|{hex(actual):^{17}}|")
         
+def generate_random_data(data_width, fifo_depth):
+    data_array =[]
+    my_data = data(data_width)
+    
+    for _ in range (fifo_depth):
+        my_data.randomize()
+        data_array.append(int(my_data.data))
+    return data_array
+
+#--------------------------------------------------------------------------------------------------
+class data(object):
+    
+    def __init__(self, width):
+        self.width = width
+        self.data = 0
+        
+    def randomize(self):
+        self.data = random.getrandbits(self.width)
+
 #--------------------------------------------------------------------------------------------------
 @cocotb.test()
 async def test_spi_handshake(dut):
     cocotb.log.info(f"Accesing the DUT: {dut._name}")
     
-    master_data = [15, 12, 5, 3, 2]
-    slave_data  = [1, 2, 5, 7, 9]
+    master_data =  generate_random_data(dut.DATA_WIDTH.value, dut.FIFO_DEPTH.value)
+    slave_data  =  generate_random_data(dut.DATA_WIDTH.value, dut.FIFO_DEPTH.value)
     
     dut.i_read_master.value = 0b0
-    
     tx_data_master = dut.tx_data_master
     tx_data_slave = dut.tx_data_slave
     write_en_master = dut.write_en_master
@@ -81,9 +102,7 @@ async def test_spi_handshake(dut):
         dut.clk,
         write_en_master,
         tx_data_master,
-        master_data,
-        dut.DATA_WIDTH,
-        dut.FIFO_DEPTH
+        master_data
     ))
 
 
@@ -91,9 +110,7 @@ async def test_spi_handshake(dut):
         dut.clk,
         write_en_slave,
         tx_data_slave,
-        slave_data,
-        dut.DATA_WIDTH,
-        dut.FIFO_DEPTH
+        slave_data
     ))
 
     await scoreboard
