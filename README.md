@@ -1,4 +1,4 @@
-# SPI Full-Duplex IP Core with FIFO
+# SPI Full-Duplex IP Core with Integrated FIFO
 
 A high-performance, **Full-Duplex SPI (Serial Peripheral Interface)** implementation in Verilog. This repository contains both **Master** and **Slave** IP cores, each integrated with **Synchronous FIFOs** to handle data buffering, ensuring reliable communication even when the system clock and SPI clock are desynchronized.
 
@@ -26,3 +26,24 @@ The system is designed to decouple the high-speed system clock domain from the r
 1.  **System Interface:** Simple `write_en/read_en` handshake to interact with the internal FIFOs.
 2.  **FIFO Layer:** Provides elasticity. The Master can "load up" multiple bytes into the TX FIFO before starting a transmission.
 3.  **Shift Register:** Logic that converts parallel FIFO data into serial bits and vice versa.
+
+---
+
+## Verification with Cocotb
+
+The verification environment uses cocotb, allowing for rapid test prototyping in Python. It verifies:
+
+1.   Basic Transfers: Single byte write/read.
+
+2.   Full-Duplex Stress: Concurrent TX/RX at maximum throughput.
+
+
+#### Prerequisites:
+
+* Python 3.12
+
+* cocotb, pytest,
+
+* A simulator (Icarus Verilog, Verilator, or Questa)
+
+* Optionally a waveform viewer (GTKWave, Surfer)
