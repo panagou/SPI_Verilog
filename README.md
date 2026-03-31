@@ -34,16 +34,12 @@ The system is designed to decouple the high-speed system clock domain from the r
 The verification environment uses cocotb, allowing for rapid test prototyping in Python. It verifies:
 
 1.   Basic Transfers: Single byte write/read.
-
 2.   Full-Duplex Stress: Concurrent TX/RX at maximum throughput.
 
 
 #### Prerequisites:
 
 * Python 3.12
-
 * cocotb, pytest,
-
 * A simulator (Icarus Verilog, Verilator, or Questa)
-
 * Optionally a waveform viewer (GTKWave, Surfer)
