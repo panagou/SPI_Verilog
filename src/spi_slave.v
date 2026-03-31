@@ -11,13 +11,13 @@ module spi_slave #(
     output reg  done
 );
 
-    reg [$clog2(DATA_WIDTH)-1:0] bit_cnt; 
+    reg [$clog2(DATA_WIDTH)-1:0] bit_cnt;
     reg miso_q, first_send;
     reg sclk_d;
     wire sclk_rise, sclk_fall;
     reg [DATA_WIDTH-1:0] data_in_reg;
 
-    assign sclk_rise = sclk & ~sclk_d; 
+    assign sclk_rise = sclk & ~sclk_d;
     assign sclk_fall = ~sclk & sclk_d;
 
     //High impedance when not selected

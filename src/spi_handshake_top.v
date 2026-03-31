@@ -8,9 +8,10 @@ module spi_handshake_top #(
 ) (
     input  wire                  clk, rst_n,
     input  wire [DATA_WIDTH-1:0] tx_data_master, tx_data_slave,
-    input  wire                   write_en_master, write_en_slave,
+    input  wire                  write_en_master, write_en_slave,
+    input  wire                  i_read_master,
     output wire [DATA_WIDTH-1:0] rx_data_master, rx_data_slave,
-    output wire                   done_master, done_slave
+    output wire                  done_master, done_slave
 );
 
 wire miso, mosi;
@@ -29,6 +30,7 @@ spi_module #(
         .i_mosi(1'b0),
         .i_miso(miso), 
         .o_mosi(mosi),
+        .i_read(i_read_master),
         .o_cs_n(cs_n),
         .o_sclk(sclk),
         .data_out(rx_data_master),

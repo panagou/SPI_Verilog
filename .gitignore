@@ -1,6 +1,10 @@
+#Python Environment
 cocotb
 spi_output
 
+
+#Vivado generated files
+Vivado
 
 # Python bytecode
 __pycache__/

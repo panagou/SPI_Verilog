@@ -45,7 +45,10 @@ def test_spi_module_runner(master):
     )
     
 #------------------------------------------------------------------------------------------------
-def test_spi_handshake_runner():
+@pytest.mark.parametrize("datawidth", [8, 16])
+# @pytest.mark.parametrize("datawidth", [4])
+
+def test_spi_handshake_runner(datawidth):
     runner = get_runner("icarus")
         
     build_drctr = get_build_dir()
@@ -59,7 +62,7 @@ def test_spi_handshake_runner():
         hdl_toplevel = "spi_handshake_top",
         waves = True,
         always = True,
-        parameters = {"DATA_WIDTH" : 4},
+        parameters = {"DATA_WIDTH" : datawidth},
         build_dir = build_drctr,
         log_file = os.path.join(build_drctr, f"./build_{__name__}.log")
     )
@@ -69,7 +72,7 @@ def test_spi_handshake_runner():
         test_module = "test_spi_handshake", 
         test_filter = "test_spi_handshake",
         waves = True,
-        log_file = os.path.join(test_drctr, f"./test_{__name__}.log"),
+        log_file = os.path.join(test_drctr, f"./test_{__name__}_{datawidth}bits.log"),
         test_dir = test_drctr,
     )
     

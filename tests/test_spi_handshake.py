@@ -11,16 +11,16 @@ async def spi_handshake_check(tx_master_data, tx_slave_data, master_done, slave_
         for expected in tx_slave_data:
             await RisingEdge(master_done)
             await ReadOnly()
-            actual = int (rx_master_data.value)
-            assert actual == expected, f"Master Recv Error: Got {actual}, Expected {expected}"
+            actual = hex(rx_master_data.value)
+            assert actual == hex(expected), f"Master Recv Error: Got {actual}, Expected {expected}"
             cocotb.log.info(f"Master received: {actual}")
             
     async def check_slave():
         for expected in tx_master_data:
             await RisingEdge(slave_done)
             await ReadOnly()
-            actual = int (rx_slave_data.value)
-            assert actual == expected, f"Slave Recv Error: Got {actual}, Expected {expected}"
+            actual = hex(rx_slave_data.value)
+            assert actual == hex(expected), f"Slave Recv Error: Got {actual}, Expected {expected}"
             cocotb.log.info(f"Slave received:  {actual}")
             
     mastercheck = cocotb.start_soon(check_master())
@@ -37,6 +37,19 @@ async def spi_fifo_write(clk, write_en, data_in, data, width, fifo_depth):
         await Timer(1, unit="ns")
         write_en.value = 0b0
         
+async def read_master_results(clk, read_en, data_out, expected_data):
+    cocotb.log.info("|--------Read Master Results--------|")
+    cocotb.log.info("|  Expected Data  |   Actual Data   |")
+    cocotb.log.info("|-----------------------------------|")
+    
+    for i in range(len(expected_data)):
+        await FallingEdge(clk)
+        read_en.value = 0b1
+        await RisingEdge(clk)
+        await ReadOnly()
+        actual = data_out.value
+        cocotb.log.info(f"|{hex(expected_data[i]):^{17}}|{hex(actual):^{17}}|")
+        
 #--------------------------------------------------------------------------------------------------
 @cocotb.test()
 async def test_spi_handshake(dut):
@@ -45,6 +58,8 @@ async def test_spi_handshake(dut):
     master_data = [15, 12, 5, 3, 2]
     slave_data  = [1, 2, 5, 7, 9]
     
+    dut.i_read_master.value = 0b0
+    
     tx_data_master = dut.tx_data_master
     tx_data_slave = dut.tx_data_slave
     write_en_master = dut.write_en_master
@@ -52,7 +67,15 @@ async def test_spi_handshake(dut):
       
     cocotb.start_soon(Clock(dut.clk, 4, unit="ns").start())  
     await test_spi.reset_dut(dut)
-  
+    
+    scoreboard = cocotb.start_soon(spi_handshake_check(
+    master_data,
+    slave_data,
+    dut.done_master,
+    dut.done_slave,
+    dut.spi_master_inst.gen_spi_master.master_data_out,
+    dut.rx_data_slave
+    ))
     
     cocotb.start_soon(spi_fifo_write(
         dut.clk,
@@ -72,15 +95,12 @@ async def test_spi_handshake(dut):
         dut.DATA_WIDTH,
         dut.FIFO_DEPTH
     ))
-    
-    await spi_handshake_check(
-        master_data,
-        slave_data,
-        dut.done_master,
-        dut.done_slave,
-        dut.rx_data_master,
-        dut.rx_data_slave
-    )
 
+    await scoreboard
     
-    await ClockCycles(dut.clk, 20, rising=True)
+    await read_master_results(
+        dut.clk,
+        dut.i_read_master,
+        dut.rx_data_master,
+        slave_data
+    )

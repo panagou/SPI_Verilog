@@ -14,7 +14,7 @@ module spi_fifo #(
     reg [$clog2(FIFO_DEPTH):0] count;
     wire wrap_around; 
 
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
             wr_ptr <= 0;
             rd_ptr <= 0;
@@ -32,7 +32,7 @@ module spi_fifo #(
                     rd_ptr   <= rd_ptr + 1;
                     count    <= count - 1;
                 end
-                2'b11: if (!full) begin
+                2'b11: if (!full && !empty) begin
                     fifo[wr_ptr] <= data_in;
                     data_out     <= fifo[rd_ptr];
                     wr_ptr       <= wr_ptr + 1;

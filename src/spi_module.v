@@ -15,6 +15,7 @@ module spi_module #(
     input  wire i_cs_n,
     input  wire i_mosi,
     input  wire i_miso,
+    input  wire i_read,
     input  wire [DATA_WIDTH-1:0] data_in,
     output wire o_mosi,
     output wire o_miso,
@@ -27,7 +28,7 @@ module spi_module #(
     generate 
         if(SPI_MASTER) begin : gen_spi_master
 
-            wire [DATA_WIDTH-1:0] fifo_data_out;
+            wire [DATA_WIDTH-1:0] fifo_data_out, master_data_out;
             wire fifo_empty, fifo_full;
 
             wire inactive_master, read_start, read_fifo;
@@ -46,7 +47,7 @@ module spi_module #(
             spi_fifo #(
                 .FIFO_DEPTH(FIFO_DEPTH),
                 .FIFO_WIDTH(DATA_WIDTH)
-            ) fifo_inst (
+            ) tx_fifo (
                 .clk(clk),
                 .rst_n(rst_n),
                 .data_in(data_in),
@@ -68,9 +69,21 @@ module spi_module #(
                 .mosi(o_mosi),
                 .cs_n(o_cs_n),
                 .sclk(o_sclk),
-                .data_out(data_out),
+                .data_out(master_data_out),
                 .done(done),
                 .inactive(inactive_master)
+            );
+
+            spi_fifo #(
+                .FIFO_DEPTH(FIFO_DEPTH),
+                .FIFO_WIDTH(DATA_WIDTH)
+            ) rx_fifo (
+                .clk(clk),
+                .rst_n(rst_n),
+                .data_in(master_data_out),
+                .write_en(done),
+                .read_en(i_read),
+                .data_out(data_out)
             );
 
             assign read_start = (!fifo_empty && inactive_master) ? 1'b1 : 1'b0;
@@ -98,7 +111,7 @@ module spi_module #(
             spi_fifo #(
                 .FIFO_DEPTH(FIFO_DEPTH),
                 .FIFO_WIDTH(DATA_WIDTH)
-            ) fifo_inst (
+            ) tx_fifo (
                 .clk(clk),
                 .rst_n(rst_n),
                 .data_in(data_in),
