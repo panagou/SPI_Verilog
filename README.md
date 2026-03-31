@@ -1,23 +1,27 @@
-SPI Full-Duplex IP Core (Master & Slave)
+# SPI Full-Duplex IP Core with FIFO
 
-A robust, high-performance Full-Duplex SPI (Serial Peripheral Interface) implementation in Verilog, featuring integrated FIFO buffers for both Master and Slave modules. This project includes a Python-based verification suite using cocotb.
-* Features
+A high-performance, **Full-Duplex SPI (Serial Peripheral Interface)** implementation in Verilog. This repository contains both **Master** and **Slave** IP cores, each integrated with **Synchronous FIFOs** to handle data buffering, ensuring reliable communication even when the system clock and SPI clock are desynchronized.
 
-    Full-Duplex Communication: Simultaneous data transmission and reception.
+The design is verified using a modern **cocotb** (Python-based) testbench environment.
 
-    Synchronous FIFO Buffers: Integrated FIFOs for input (RX) and output (TX) to decouple the SPI clock domain from the system logic.
+---
 
-    Configurable Parameters: Easily adjust Data Width (default 8-bit) and FIFO Depth.
+## Key Features
 
-    Cocotb Testbench: Modern Python-based verification environment for rigorous testing of edge cases and throughput.
+* **Full-Duplex:** Simultaneous bidirectional data transfer (MOSI and MISO).
+* **Integrated FIFOs:** * **TX FIFO:** Buffers data from the system logic to be sent over SPI.
+    * **RX FIFO:** Buffers incoming SPI data for the system logic to read.
+* **Configurable Parameters:**
+    * `DATA_WIDTH`: Default 8-bit (adjustable to 16, 32, etc.).
+    * `FIFO_DEPTH`: Configurable buffer size to prevent data loss.
+* **Verification:** Includes a Python testbench using `cocotb` for automated, scalable testing.
 
-* Architecture
+---
 
-The design consists of two primary modules: spi_master and spi_slave. Each module encapsulates a shift register state machine and circular buffer FIFOs to handle data bursts without CPU intervention.
-Module Breakdown
+## Architecture Overview
 
-    Master IP: Generates SCLK and CS_N. Controls the communication flow.
+The system is designed to decouple the high-speed system clock domain from the relatively slower SPI serial clock.
 
-    Slave IP: Responds to the Master's clock and chip select signals.
-
-    FIFO Logic: Prevents data loss during high-speed transfers by buffering incoming/outgoing bytes.
+1.  **System Interface:** Simple `wr_en/rd_en` handshake to interact with the internal FIFOs.
+2.  **FIFO Layer:** Provides elasticity. The Master can "load up" multiple bytes into the TX FIFO before starting a transmission.
+3.  **Shift Register:** Logic that converts parallel FIFO data into serial bits and vice versa.
