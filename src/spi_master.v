@@ -12,8 +12,8 @@
     output wire                  mosi,      
     output reg                   cs_n,      
     output wire                  sclk,
-    output reg                   done,
-    output reg                  inactive,        
+    output reg                   done,  //done is not needed for master but we can use it for testing
+    output reg                   inactive,        
     output reg  [DATA_WIDTH-1:0] data_out   // Data received from slave
     
  );
@@ -49,7 +49,11 @@
             data_in_reg <= {DATA_WIDTH{1'b0}};     
         end else begin
             clk_d <= clk_reg;
-            if (done) done <= 1'b0;
+            if (done) begin
+                done <= 1'b0;
+            end else begin
+                done <=done;
+        end
             case(spi_status)
                 `SPI_STATUS_IDLE: begin
                     if (start) begin
@@ -58,7 +62,6 @@
                         bit_cnt     <= {($clog2(DATA_WIDTH)){1'b0}}; 
                         spi_status  <= `SPI_STATUS_CYCLE_BITS;
                         mosi_q      <= data_in[DATA_WIDTH-1];
-                        data_in_reg <= data_in;
                         inactive    <= 1'b0; 
                     end
                 end
@@ -87,6 +90,19 @@
                         first_send  <= 1'b1;
                         inactive    <= 1'b0; 
                     end
+                end
+                default: begin
+                    spi_status  <= `SPI_STATUS_IDLE;
+                    cs_n        <= 1'b1;
+                    done        <= 1'b0;
+                    inactive    <= 1'b0;
+                    clk_reg     <= 1'b0;
+                    clk_d       <= 1'b0;
+                    done        <= 1'b0;
+                    inactive    <= 1'b1;
+                    bit_cnt     <= {($clog2(DATA_WIDTH)){1'b0}};
+                    data_out    <= {DATA_WIDTH{1'b0}};
+                    data_in_reg <= {DATA_WIDTH{1'b0}}; 
                 end
             endcase
         end

@@ -14,13 +14,13 @@ module spi_handshake_top #(
     output wire                  done_master, done_slave
 );
 
-wire miso, mosi;
+    wire miso, mosi;
 
-spi_module #(
+    spi_module #(
         .SPI_MASTER(1'b1),
         .DATA_WIDTH(DATA_WIDTH),
         .FIFO_DEPTH(FIFO_DEPTH)
-) spi_master_inst (
+    ) spi_master_inst (
         .clk(clk),
         .rst_n(rst_n),
         .i_sclk(1'b0),
