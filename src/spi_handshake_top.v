@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`default_nettype none
 
 `include "./spi_module.v"
 
@@ -14,7 +15,7 @@ module spi_handshake_top #(
     output wire                  done_master, done_slave
 );
 
-    wire miso, mosi;
+    wire miso, mosi, sclk, cs_n;
 
     spi_module #(
         .SPI_MASTER(1'b1),

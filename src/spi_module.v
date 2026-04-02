@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`default_nettype none
 
 `include "spi_master.v"
 `include "spi_slave.v"
